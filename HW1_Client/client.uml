@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>io.swagger.client</OriginalElement>
+  <nodes>
+    <node x="338.025" y="89.0">io.swagger.client.GenerateStatistics</node>
+    <node x="30.0" y="89.0">io.swagger.client.model</node>
+    <node x="213.25727272727275" y="327.0">io.swagger.client.PostThread</node>
+    <node x="721.7750000000001" y="89.0">io.swagger.client.BlockingQueueToCSV</node>
+    <node x="492.27352272727273" y="0.0">io.swagger.client.RequestData</node>
+    <node x="189.025" y="89.0">io.swagger.client.ApiResponse</node>
+    <node x="148.64852272727273" y="188.0">io.swagger.client.api</node>
+    <node x="551.775" y="188.0">io.swagger.client.SkierApiExample</node>
+    <node x="520.025" y="89.0">io.swagger.client.Phase</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="io.swagger.client.Phase" target="io.swagger.client.RequestData">
+      <point x="0.0" y="-14.5" />
+      <point x="562.525" y="69.0" />
+      <point x="555.2735227272727" y="69.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="io.swagger.client.Phase" target="io.swagger.client.PostThread">
+      <point x="-21.25" y="14.5" />
+      <point x="541.275" y="287.0" />
+      <point x="305.2118181818182" y="287.0" />
+      <point x="32.45454545454544" y="-14.5" />
+    </edge>
+    <edge source="io.swagger.client.PostThread" target="io.swagger.client.ApiResponse">
+      <point x="0.0" y="-14.5" />
+      <point x="272.7572727272727" y="307.0" />
+      <point x="268.0904545454545" y="307.0" />
+      <point x="268.0904545454545" y="168.0" />
+      <point x="285.025" y="168.0" />
+      <point x="32.0" y="14.5" />
+    </edge>
+    <edge source="io.swagger.client.PostThread" target="io.swagger.client.SkierApiExample">
+      <point x="43.27272727272725" y="-14.5" />
+      <point x="316.03" y="297.0" />
+      <point x="626.275" y="297.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="io.swagger.client.SkierApiExample" target="io.swagger.client.RequestData">
+      <point x="37.25" y="-14.5" />
+      <point x="663.525" y="69.0" />
+      <point x="573.2735227272727" y="69.0" />
+      <point x="18.0" y="14.5" />
+    </edge>
+    <edge source="io.swagger.client.PostThread" target="io.swagger.client.api">
+      <point x="-32.45454545454544" y="-14.5" />
+      <point x="240.3027272727273" y="287.0" />
+      <point x="201.14852272727273" y="287.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="io.swagger.client.model" target="io.swagger.client.model">
+      <point x="-24.80000000000001" y="14.5" />
+      <point x="67.19999999999999" y="148.0" />
+      <point x="0.0" y="148.0" />
+      <point x="0.0" y="96.25" />
+      <point x="-62.0" y="-7.25" />
+    </edge>
+    <edge source="io.swagger.client.BlockingQueueToCSV" target="io.swagger.client.RequestData">
+      <point x="0.0" y="-14.5" />
+      <point x="813.2750000000001" y="49.0" />
+      <point x="609.2735227272727" y="49.0" />
+      <point x="54.0" y="14.5" />
+    </edge>
+    <edge source="io.swagger.client.SkierApiExample" target="io.swagger.client.Phase">
+      <point x="-37.25" y="-14.5" />
+      <point x="589.025" y="168.0" />
+      <point x="583.775" y="168.0" />
+      <point x="21.25" y="14.5" />
+    </edge>
+    <edge source="io.swagger.client.api" target="io.swagger.client.ApiResponse">
+      <point x="26.25" y="-14.5" />
+      <point x="227.39852272727273" y="168.0" />
+      <point x="221.025" y="168.0" />
+      <point x="-32.0" y="14.5" />
+    </edge>
+    <edge source="io.swagger.client.api" target="io.swagger.client.model">
+      <point x="-26.25" y="-14.5" />
+      <point x="174.89852272727273" y="168.0" />
+      <point x="141.60000000000002" y="168.0" />
+      <point x="49.60000000000002" y="14.5" />
+    </edge>
+    <edge source="io.swagger.client.PostThread" target="io.swagger.client.model">
+      <point x="-54.090909090909065" y="-14.5" />
+      <point x="218.66636363636368" y="307.0" />
+      <point x="97.33034090909092" y="307.0" />
+      <point x="97.33034090909092" y="168.0" />
+      <point x="92.0" y="168.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="io.swagger.client.api" target="io.swagger.client.api">
+      <point x="-42.0" y="14.5" />
+      <point x="159.14852272727273" y="237.0" />
+      <point x="128.64852272727273" y="237.0" />
+      <point x="128.64852272727273" y="209.75" />
+      <point x="-52.5" y="7.25" />
+    </edge>
+    <edge source="io.swagger.client.PostThread" target="io.swagger.client.RequestData">
+      <point x="10.818181818181813" y="-14.5" />
+      <point x="283.5754545454546" y="267.0" />
+      <point x="327.525" y="267.0" />
+      <point x="327.525" y="49.0" />
+      <point x="501.27352272727273" y="49.0" />
+      <point x="-54.0" y="14.5" />
+    </edge>
+    <edge source="io.swagger.client.GenerateStatistics" target="io.swagger.client.RequestData">
+      <point x="0.0" y="-14.5" />
+      <point x="418.525" y="59.0" />
+      <point x="519.2735227272727" y="59.0" />
+      <point x="-36.0" y="14.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.288607795335162" x="451.69147699686243" y="196.73080315742374" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
