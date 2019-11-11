@@ -19,14 +19,12 @@ public class GenerateStatistics {
     double percentile99 = descriptiveStatistics.getPercentile(99);
     double standardDeviation = descriptiveStatistics.getStandardDeviation();
     double max = descriptiveStatistics.getMax();
-    double throughput = (double) (numRequestFail + numRequestSuccessful) / wallTime * 1000;
 
     System.out.println("Latency mean = " + mean);
     System.out.println("Latency median = " + median);
     System.out.println("Latency percentile99 = " + percentile99);
     System.out.println("Latency max = " + max);
     System.out.println("Latency standardDeviation = " + standardDeviation);
-    System.out.println("Throughput = " + throughput);
 
   }
 }

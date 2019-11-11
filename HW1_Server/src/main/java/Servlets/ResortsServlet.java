@@ -81,21 +81,21 @@ public class ResortsServlet extends HttpServlet {
     return true;
   }
 
-  private Integer strToNum(String str) {
-    Integer num = null;
-    try {
-      num = Integer.parseInt(str);
-    } catch (NumberFormatException nfe) {
-      System.out.println("Wrong Format");
-    } catch (NullPointerException npe) {
-      System.out.println("Null Pointer");
-    }
-    return num;
-  }
-  private boolean validate32Int(String str) {
-    if (strToNum(str) == null) return false;
-    return true;
-  }
+//  private Integer strToNum(String str) {
+//    Integer num = null;
+//    try {
+//      num = Integer.parseInt(str);
+//    } catch (NumberFormatException nfe) {
+//      System.out.println("Wrong Format");
+//    } catch (NullPointerException npe) {
+//      System.out.println("Null Pointer");
+//    }
+//    return num;
+//  }
+//  private boolean validate32Int(String str) {
+//    if (strToNum(str) == null) return false;
+//    return true;
+//  }
 //  private boolean validateYear(String str) {
 //    Integer year = strToNum(str);
 //    if (year == null) return false;

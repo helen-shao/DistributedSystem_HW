@@ -1,17 +1,12 @@
 package io.swagger.client;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import io.swagger.client.api.SkiersApi;
+import io.swagger.client.api.StatisticsApi;
+import io.swagger.client.model.APIStats;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.atomic.AtomicInteger;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-
 
 public class SkierApiMain {
   /*
@@ -21,7 +16,7 @@ public class SkierApiMain {
   mean numbers of ski lifts each skier rides each day (numRuns - default 10, max 20)
   IP/port address of the server
   */
-  static final int numThreads = 32;
+  static final int numThreads = 256;
   static final int numSkiers = 20000;
   static final int numLifts = 40;
   static final int numRuns = 20;
@@ -39,17 +34,32 @@ public class SkierApiMain {
   static final double peakRequest = 0.8;
   static final double cooldownRequest = 0.1;
 
+  // time range for each phase
+  static final int[] warmupTimeRange = new int[]{1, 91};
+  static final int[] peakTimeRange = new int[]{91, 361};
+  static final int[] cooldownTimeRange = new int[]{361, 421};
+
   // Once this percent of threads in current phase has completed,
   // next phase should begin.
   static final double percentBeforeNextPhase = 0.1;
 
   // BasePath URL
-  //static final String localBasePath = "http://localhost:8080/web_app";
-  static final String localBasePath = "http://ec2-54-214-219-231.us-west-2.compute.amazonaws.com:8080/CS6650_V3";
-  //static final String localBasePath = "http://34.217.208.47:8080/SkiResorts_war"; // Yun Wu
+//  static final String localBasePath = "http://localhost:8080/CS6650_war";
+//  static final String localBasePath = "http://ec2-54-214-219-231.us-west-2.compute.amazonaws.com:8080/CS6650_war";
+//  static final String localBasePath = "http://ec2-52-38-143-124.us-west-2.compute.amazonaws.com:8080/CS6650_war";
+//  static final String localBasePath = "http://ec2-34-220-160-52.us-west-2.compute.amazonaws.com:8080/CS6650_war";
+//  static final String localBasePath = "http://ec2-54-188-158-1.us-west-2.compute.amazonaws.com:8080/CS6650_war";
+  static final String localBasePath = "http://CS6650-fc8726c3eeedc97c.elb.us-west-2.amazonaws.com:8080/CS6650_war"; // load balancer
 
-  public static int numRequestSuccessful = 0;
-  public static int numRequestFail = 0;
+//  static final String localBasePath = "http://ec2-52-88-117-225.us-west-2.compute.amazonaws.com:8080/app-server_war"; // Mao
+//  static final String localBasePath = "http://34.217.208.47:8080/SkiResorts_war"; // Yun Wu
+//  static final String localBasePath = "http://54.191.39.74:8080/server"; //shangzhen
+
+  public static int numRequestSuccessfulPost = 0;
+  public static int numRequestFailPost = 0;
+
+  public static int numRequestSuccessfulGet = 0;
+  public static int numRequestFailGet = 0;
 
   public static void main(String[] args)
       throws BrokenBarrierException, ApiException, InterruptedException {
@@ -65,7 +75,9 @@ public class SkierApiMain {
     int threadsNumCurrent3 = (int) Math.ceil(numThreads * cooldown);
     int threadsNumBeforeNext3 = threadsNumCurrent3;
 
-    BlockingQueue<RequestData> blockingQueue = new LinkedBlockingDeque<>();
+    BlockingQueue<RequestData> blockingQueuePost = new LinkedBlockingDeque<>();
+    BlockingQueue<RequestData> blockingQueueGet = new LinkedBlockingDeque<>();
+
 
     CountDownLatch countDownLatchOverall = new CountDownLatch(
         threadsNumCurrent
@@ -75,21 +87,27 @@ public class SkierApiMain {
     // phase 1=============================================================================
     System.out.println("Start Phase 1");
     CountDownLatch countDownLatch = new CountDownLatch(threadsNumBeforeNext);
-    Phase.Phase(countDownLatchOverall, countDownLatch, threadsNumCurrent, localBasePath, numRuns, numSkiers, warmupRequest, warmup, blockingQueue);
+    Phase.Phase(countDownLatchOverall, countDownLatch, threadsNumCurrent,
+        localBasePath, numRuns, numSkiers, warmupRequest, warmup,
+        blockingQueuePost, blockingQueueGet, warmupTimeRange);
     countDownLatch.await();
     System.out.println("Terminating Phase 1...");
 
     // phase 2=============================================================================
     System.out.println("Start Phase 2");
     CountDownLatch countDownLatch2 = new CountDownLatch(threadsNumBeforeNext2);
-    Phase.Phase(countDownLatchOverall, countDownLatch2,threadsNumCurrent2, localBasePath, numRuns, numSkiers, peakRequest, peak, blockingQueue);
+    Phase.Phase(countDownLatchOverall, countDownLatch2,threadsNumCurrent2,
+        localBasePath, numRuns, numSkiers, peakRequest, peak,
+        blockingQueuePost, blockingQueueGet, peakTimeRange);
     countDownLatch2.await();
     System.out.println("Terminating Phase 2...");
 
     // phase 3=============================================================================
     System.out.println("Start Phase 3");
     CountDownLatch countDownLatch3 = new CountDownLatch(1);
-    Phase.Phase(countDownLatchOverall, countDownLatch3, threadsNumCurrent3, localBasePath, numRuns, numSkiers, cooldownRequest, cooldown, blockingQueue);
+    Phase.Phase(countDownLatchOverall, countDownLatch3, threadsNumCurrent3,
+        localBasePath, numRuns, numSkiers, cooldownRequest, cooldown,
+        blockingQueuePost, blockingQueueGet, cooldownTimeRange);
     countDownLatch3.await();
     System.out.println("Terminating Phase 3...");
 
@@ -101,25 +119,43 @@ public class SkierApiMain {
     long wallTime = endTime-startTime;
 
     // Start Output on the Screen===========================================================================
-    System.out.println("Logistics ==================================");
+    System.out.println("Logistics --------------------------------");
     System.out.println("numThreads = " + numThreads);
     System.out.println("numSkiers = " + numSkiers);
     System.out.println("numLifts = " + numLifts);
     System.out.println("numRuns = " + numRuns);
     System.out.println("wall time for all phase = " + wallTime + " millisec");
-    System.out.println("numRequestSuccessful = " + numRequestSuccessful);
-    System.out.println("numRequestFail = " + numRequestFail);
+    System.out.println("numPostRequestSuccessful = " + numRequestSuccessfulPost);
+    System.out.println("numPostRequestFail = " + numRequestFailPost);
+    System.out.println("numGetRequestSuccessful = " + numRequestSuccessfulGet);
+    System.out.println("numGetRequestFail = " + numRequestFailGet);
     // End Output on the Screen=============================================================================
+
 
     if (!enableBlockingQueue) return;
 
     // Write results from blockingQueue to CSV file=========================================================
     String filePath = "output"+"numThreads"+numThreads+"_"+"numSkiers"+numSkiers+"_"+"numRuns"+numRuns+".csv";
-    BlockingQueueToCSV.writeToCSV(filePath, blockingQueue);
+    BlockingQueueToCSV.writeToCSV(filePath, blockingQueuePost);
     // =====================================================================================================
 
     // process data and generate plot=======================================================================
-    System.out.println("statistics ==================================");
-    GenerateStatistics.generateStatistics(blockingQueue, numRequestSuccessful, numRequestFail, wallTime);
+    System.out.println("statistics");
+    System.out.println("Post requests:-------------------------------");
+    GenerateStatistics.generateStatistics(blockingQueuePost, numRequestSuccessfulPost, numRequestFailPost, wallTime);
+    System.out.println("Get requests:--------------------------------");
+    GenerateStatistics.generateStatistics(blockingQueueGet, numRequestSuccessfulGet, numRequestFailGet, wallTime);
+    System.out.println("Throughput: ---------------------------------");
+    double throughput = (double) (numRequestSuccessfulPost + numRequestSuccessfulGet +
+            numRequestFailPost + numRequestFailGet) / wallTime * 1000;
+    System.out.println("Throughput = " + throughput);
+
+    // =====================================================================================================
+    StatisticsApi apiInstance = new StatisticsApi();
+    ApiClient client = apiInstance.getApiClient();
+    client.setBasePath(localBasePath);
+
+    APIStats apiResponse = apiInstance.getPerformanceStats();
+    System.out.println(apiResponse.toString());
   }
 }
