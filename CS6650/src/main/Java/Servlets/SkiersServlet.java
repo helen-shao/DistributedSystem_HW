@@ -12,11 +12,13 @@ import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -31,17 +33,17 @@ import static Servlets.ValidateSkiersURL.hasURL;
 @WebServlet(name = "SkiersServlet")
 public class SkiersServlet extends HttpServlet {
 
+//  private static final Logger LOGGER = Logger.getLogger(SkiersServlet.class.getName());
   static {
     Cacher.start();
   }
-  
+
   protected static Map<APISupported, RuntimeStatistics> statisticsMap = new ConcurrentHashMap<>();
 
   protected void doPost(HttpServletRequest req,
       HttpServletResponse res)
       throws ServletException, IOException {
     res.setContentType("application/json");
-
     long startTime = System.currentTimeMillis();
     String urlPath = req.getPathInfo();
     if (!hasURL(urlPath)) {
@@ -59,7 +61,6 @@ public class SkiersServlet extends HttpServlet {
       PostCache.addToCache(liftRideQuery);
       res.setStatus(HttpServletResponse.SC_CREATED);
     }
-
     long endTime = System.currentTimeMillis();
     long latency = endTime - startTime;
     if (!statisticsMap.containsKey(APISupported.PostLiftRide)) {

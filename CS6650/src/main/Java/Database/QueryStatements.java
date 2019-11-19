@@ -3,8 +3,10 @@ package Database;
 import Model.LiftRideQuery;
 import java.sql.*;
 import java.util.List;
+import Servlets.SkiersServlet.*;
 
 public class QueryStatements {
+  private static final String DB_CONNECTION_URL = "jdbc:mysql://34.83.46.108:3306/SkiResortApplication";
 
   private static final String LIFTRIDE_TABLE = "LiftRides";
   private static final String INSERT_QUERY_LIFTRIDE = "INSERT IGNORE INTO " + LIFTRIDE_TABLE
@@ -40,6 +42,9 @@ public class QueryStatements {
   public static void insertIntoLiftRides(LiftRideQuery liftRideQuery)
       throws SQLException {
     Connection connection = DataSource.getInstance().getBasicDS().getConnection();
+//    Connection connection = HikariDataSourceTest.getConnection();
+//    Connection connection = DriverManager.getConnection(DB_CONNECTION_URL);
+
     PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY_LIFTRIDE);
     prepareStatementPrimaryKey(preparedStatement, liftRideQuery);
     prepareStatementSetLiftRide(preparedStatement, liftRideQuery);
@@ -53,6 +58,9 @@ public class QueryStatements {
       throws SQLException {
     // If record exists in SkierVerticals table, update the total vertical. Otherwise insert new record.
     Connection connection = DataSource.getInstance().getBasicDS().getConnection();
+//    Connection connection = HikariDataSourceTest.getConnection();
+//    Connection connection = DriverManager.getConnection(DB_CONNECTION_URL);
+
     PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY_SKIER_VERTICAL);
     prepareStatementPrimaryKey(preparedStatement, liftRideQuery);
     prepareStatementSetLiftRide(preparedStatement, liftRideQuery);
@@ -62,6 +70,9 @@ public class QueryStatements {
   public static ResultSet getSumOfVerticals(LiftRideQuery liftRideQuery)
       throws SQLException {
     Connection connection = DataSource.getInstance().getBasicDS().getConnection();
+//    Connection connection = HikariDataSourceTest.getConnection();
+//    Connection connection = DriverManager.getConnection(DB_CONNECTION_URL);
+
     PreparedStatement preparedStatement = connection.prepareStatement(GET_QUERY_SUM_VERTICAL);
     prepareStatementPrimaryKey(preparedStatement, liftRideQuery);
     ResultSet resultSet = preparedStatement.executeQuery();
@@ -72,6 +83,9 @@ public class QueryStatements {
 
   public static void batchPostLiftRides(List<LiftRideQuery> liftRideQueries) throws SQLException {
     Connection connection = DataSource.getInstance().getBasicDS().getConnection();
+//    Connection connection = HikariDataSourceTest.getConnection();
+//    Connection connection = DriverManager.getConnection(DB_CONNECTION_URL);
+
     PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY_LIFTRIDE);
     for (LiftRideQuery liftRideQuery: liftRideQueries) {
       prepareStatementPrimaryKey(preparedStatement, liftRideQuery);
@@ -87,6 +101,9 @@ public class QueryStatements {
 
   public static void batchPostSkierVerticals(List<LiftRideQuery> liftRideQueries) throws SQLException {
     Connection connection = DataSource.getInstance().getBasicDS().getConnection();
+//    Connection connection = HikariDataSourceTest.getConnection();
+//    Connection connection = DriverManager.getConnection(DB_CONNECTION_URL);
+
     PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY_SKIER_VERTICAL);
     for (LiftRideQuery liftRideQuery: liftRideQueries) {
       prepareStatementPrimaryKey(preparedStatement, liftRideQuery);
